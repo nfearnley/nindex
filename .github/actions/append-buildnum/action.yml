@@ -9,7 +9,7 @@ runs:
   using: composite
   steps:
     - name: blarg
-      run: python -c "import os; print(os.getcwd())"
+      run: python -c "import os; print(os.environ.get('GITHUB_ACTION_PATH'))"
       shell: bash
 
     - name: Setup env
