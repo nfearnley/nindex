@@ -8,6 +8,10 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: py version
+      run: python -V
+      shell: bash
+
     - name: Setup env
       run: python $GITHUB_ACTION_PATH/buildnum_env.py >> $GITHUB_ENV
       shell: bash
