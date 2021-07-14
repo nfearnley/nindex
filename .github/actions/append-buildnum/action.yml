@@ -8,8 +8,12 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: blarg
+      run: python -c "import os; print(os.getcwd())"
+      shell: bash
+
     - name: Setup env
-      run: python prep_buildnum.py >> $GITHUB_ENV
+      run: python buildnum_env.py >> $GITHUB_ENV
       shell: bash
 
     - name: Print version numbers
