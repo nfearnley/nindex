@@ -1,0 +1,37 @@
+name: Append build number to version
+
+inputs:
+  package:
+    description: Package name
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup env
+      run: >
+        python -c "
+          from setuptools.config import read_configuration;
+          c=read_configuration('setup.cfg');
+          package_name = c['options']['packages'][0];
+          old_version = c['metadata']['version'];
+          run_number = ${{ github.run_number }};
+          new_version = old_version + '.post' + run_number;
+          print('package-name=' + package_name);
+          print('old-version=' + old_version);
+          print('new-version=' + new_version);
+        " >> $GITHUB_ENV
+      shell: bash
+
+    - name: Print version numbers
+      run: |
+        echo -e "Old Version: ${{ env.old-version }}"
+        echo -e "New Version: ${{ env.new-version }}"
+      shell: bash
+
+    - name: Append build number to version
+      env:
+        OLD_VERSION_LINE: ^__version__ *= *\"${{ env.old-version }}\" *$
+        NEW_VERSION_LINE: __version__ = \"${{ env.new-version }}\"
+      run: sed -i "s/${OLD_VERSION_LINE}/${NEW_VERSION_LINE}/" "${{ env.package-name }}/__init__.py"
+      shell: bash
